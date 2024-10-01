@@ -1,39 +1,20 @@
 import fastify from 'fastify';
 import view from '@fastify/view';
 import pug from 'pug';
+import fastifyFormbody from '@fastify/formbody';
+import _ from 'lodash';
 
 const app = fastify({
   logger: true
 });
 const port = 3000;
 
+await app.register(fastifyFormbody);
 await app.register(view, { engine: { pug }});
 
 const state = {
-  users: [
-    {
-      id: 1,
-      name: 'user1',
-      email: 'user1@mail.com'
-    },
-    {
-      id: 2,
-      name: 'user2',
-      email: 'user2@mail.com'
-    },
-  ],
-  courses: [
-    {
-      id: 1,
-      title: 'JS: Arrays',
-      description: 'Arrays in javascript course',
-    },
-    {
-      id: 2,
-      title: 'JS: Functions',
-      description: 'Functions in javascript course',
-    },
-  ],
+  users: [],
+  courses: [],
 };
 
 app.get('/', (req, res) => res.view('src/views/index'));
@@ -75,6 +56,22 @@ app.get('/courses', (req, res) => {
   res.view('src/views/courses/index', data);
 });
 
+app.post('/courses', (req, res) => {
+  const course = {
+    id: parseInt(_.uniqueId()),
+    title: req.body.title,
+    description: req.body.description,
+  };
+
+  state.courses.push(course);
+
+  res.redirect('/courses');
+})
+
+app.get('/courses/new', (req, res) => {
+  res.view('src/views/courses/new');
+});
+
 app.get('/courses/:id', (req, res) => {
   const { id } = req.params;
   const course = state.courses.find((course) => course.id === parseInt(id));
@@ -101,9 +98,25 @@ app.get('/users', (req, res) => {
   res.view('src/views/users/index', data);
 });
 
+app.post('/users', (req, res) => {
+  const user = {
+    name: req.body.name.trim(),
+    email: req.body.email.trim().toLowerCase(),
+    password: req.body.password,
+  };
+
+  state.users.push(user);
+
+  res.redirect('/users');
+})
+
+app.get('/users/new', (req, res) => {
+  res.view('src/views/users/new');
+});
+
 app.get('/users/:id', (req, res) => {
   const { id } = req.params;
-  const user = state.users.find((user) => user.id === parseInt(id));
+  const user = state.users.find((user) => user.name === id);
   if (!user) {
     res.code(404).send({ message: 'User not found' });
     return;

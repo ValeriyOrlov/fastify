@@ -1,0 +1,18 @@
+extends ../layouts/page.pug
+
+block content
+  h2 User creation
+  form(action = '/users', method = 'post')
+    div
+      label Name:
+        input(type = 'text', name = 'name')
+    div
+      label Email:
+        input(type = 'email', name = 'email', required = true)
+    div
+      label Password:
+        input(type = 'password', name = 'password', required = true)
+    div
+      label Password confirmation:
+        input(type = 'password', name = 'passwordConfirmation', required = true)
+    input(type = 'submit', value = 'Register')

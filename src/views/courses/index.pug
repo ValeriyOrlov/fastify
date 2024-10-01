@@ -1,6 +1,8 @@
 extends ../layouts/page.pug
 
 block content
+  h2
+    a(href='/courses/new') Create course
   fieldset
     form(role = 'form' method = 'GET' action = '/courses')
       legend Search by:

@@ -2,11 +2,13 @@ extends ../layouts/page.pug
 
 block content
   h1= header
+  h2
+    a(href='/users/new') Create user
   if users.length === 0
     p No users have been added yet :/
   else
     each user in users
       div
         h2
-          a(href=`/users/${user.id}`)= user.name
+          a(href=`/users/${user.name}`)= user.name
         p= user.email
