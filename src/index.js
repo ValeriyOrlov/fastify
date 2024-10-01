@@ -49,8 +49,26 @@ app.get('/hello', (req, res) => {
 });
 
 app.get('/courses', (req, res) => {
+  const { searchBy, term }= req.query;
+  
+  let currentCourses = state.courses;
+  if (term && searchBy === 'title') {
+    currentCourses = state.courses.filter((course) => course.title
+    .toLowerCase()
+    .includes(term.toLowerCase())
+    )
+  }
+
+  if (term && searchBy === 'description') {
+    currentCourses = state.courses.filter((course) => course.description
+    .toLowerCase()
+    .includes(term.toLowerCase())
+    )
+  }
+
   const data = {
-    courses: state.courses,
+    courses: currentCourses,
+    term,
     header: 'Programming courses'
   }
 

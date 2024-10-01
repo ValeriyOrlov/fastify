@@ -1,12 +1,28 @@
 extends ../layouts/page.pug
 
 block content
-    h1= header
-    if courses.length === 0
-      p No course have been added yet :/
-    else
-      each course in courses
+  fieldset
+    form(role = 'form' method = 'GET' action = '/courses')
+      legend Search by:
         div
-          h2
-            a(href=`/courses/${course.id}`)= course.title
-          p= course.description
+          input(type = 'radio', id='title', name = 'searchBy', value = 'title' checked)
+          label(for='title') title
+        div
+          input(type = 'radio', id='description', name = 'searchBy', value = 'description')
+          label(for='description') description
+        div
+          input(type = 'search', name = 'term', value = term)
+          input(type = 'submit' value = 'search')
+
+  table
+    tr
+      th courseId
+      th title
+      th description
+    
+    each course, index in courses
+      tr
+        td
+          a(href='courses/' + course.id) #{course.id}
+          td= course.title
+          td= course.description
