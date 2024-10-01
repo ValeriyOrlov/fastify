@@ -1,0 +1,12 @@
+extends ../layouts/page.pug
+
+block content
+  h1= header
+  if users.length === 0
+    p No users have been added yet :/
+  else
+    each user in users
+      div
+        h2
+          a(href=`/users/${user.id}`)= user.name
+        p= user.email
