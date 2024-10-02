@@ -4,7 +4,7 @@ block content
   h2 User creation
   if error
     p= error.message
-  form(action = '/users', method = 'post')
+  form(action = Routes.usersPath(), method = 'post')
     div
       label Name:
         input(type = 'text', name = 'name')

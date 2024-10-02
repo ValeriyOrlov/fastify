@@ -5,7 +5,7 @@ block content
     p= error.message
 
   h2 Course creation
-  form(action = '/courses', method = 'post')
+  form(action = Routes.coursesPath(), method = 'post')
     div
       label Title:
         input(type = 'text', name = 'title')

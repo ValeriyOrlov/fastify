@@ -18,6 +18,15 @@ const state = {
   courses: [],
 };
 
+export class Routes {
+  static coursePath = (id) => `/courses/${id}`;
+  static coursesPath = () => '/courses';
+  static newCoursesPath = () => '/courses/new';
+  static userPath = (id) => `/users/${id}`;
+  static usersPath = () => '/users';
+  static newUsersPath = () => '/users/new';
+}
+
 app.get('/', (req, res) => res.view('src/views/index'));
 
 app.get('/hello', (req, res) => {
@@ -30,7 +39,7 @@ app.get('/hello', (req, res) => {
   }
 });
 
-app.get('/courses', (req, res) => {
+app.get(Routes.coursesPath(), (req, res) => {
   const { searchBy, term }= req.query;
   
   let currentCourses = state.courses;
@@ -51,13 +60,14 @@ app.get('/courses', (req, res) => {
   const data = {
     courses: currentCourses,
     term,
-    header: 'Programming courses'
+    header: 'Programming courses',
+    Routes,
   }
 
   res.view('src/views/courses/index', data);
 });
 
-app.post('/courses', {
+app.post(Routes.coursesPath(), {
   attachValidation: true,
   schema: {
     body: yup.object({
@@ -80,6 +90,7 @@ app.post('/courses', {
     const data = {
       title, description,
       error: req.validationError,
+      Routes,
     };
 
     res.view('src/views/courses/new', data);
@@ -97,11 +108,11 @@ app.post('/courses', {
   res.redirect('/courses');
 })
 
-app.get('/courses/new', (req, res) => {
-  res.view('src/views/courses/new');
+app.get(Routes.newCoursesPath(), (req, res) => {
+  res.view('src/views/courses/new', { Routes });
 });
 
-app.get('/courses/:id', (req, res) => {
+app.get(Routes.coursePath(':id'), (req, res) => {
   const { id } = req.params;
   const course = state.courses.find((course) => course.id === parseInt(id));
   if (!course) {
@@ -110,24 +121,22 @@ app.get('/courses/:id', (req, res) => {
   }
   const data = {
     course,
+    Routes,
   }
   res.view('src/views/courses/show', data);
 });
 
-app.get('/courses/:courseId/lessons/:id', (req, res) => {
-  res.send(`Course ID: ${req.params.courseId}; Lesson ID: ${req.params.id}`);
-});
-
-app.get('/users', (req, res) => {
+app.get(Routes.usersPath(), (req, res) => {
   const data = {
     users: state.users,
-    header: 'Users list'
+    header: 'Users list',
+    Routes,
   }
 
   res.view('src/views/users/index', data);
 });
 
-app.post('/users', {
+app.post(Routes.usersPath(), {
   attachValidation: true,
   schema: {
     body: yup.object({
@@ -157,6 +166,7 @@ app.post('/users', {
     const data = {
       name, email, password, passwordConfirmation,
       error: req.validationError,
+      Routes,
     }
 
     res.view('src/views/users/new', data);
@@ -174,11 +184,11 @@ app.post('/users', {
   res.redirect('/users');
 })
 
-app.get('/users/new', (req, res) => {
-  res.view('src/views/users/new');
+app.get(Routes.newUsersPath(), (req, res) => {
+  res.view('src/views/users/new', { Routes });
 });
 
-app.get('/users/:id', (req, res) => {
+app.get(Routes.userPath(':id'), (req, res) => {
   const { id } = req.params;
   const user = state.users.find((user) => user.name === id);
   if (!user) {
@@ -188,14 +198,12 @@ app.get('/users/:id', (req, res) => {
 
   const data = {
     user,
+    Routes,
   }
   
   res.view('src/views/users/show', data);
 });
 
-app.get('/users/:id/posts/:postId', (req, res) => {
-  res.send(`User ID: ${req.params.id}; Post ID: ${req.params.postId}`);
-});
 
 try {
   await app.listen({ port }, () => {

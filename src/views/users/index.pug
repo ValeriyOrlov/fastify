@@ -3,12 +3,12 @@ extends ../layouts/page.pug
 block content
   h1= header
   h2
-    a(href='/users/new') Create user
+    a(href=Routes.newUsersPath()) Create user
   if users.length === 0
     p No users have been added yet :/
   else
     each user in users
       div
         h2
-          a(href=`/users/${user.name}`)= user.name
+          a(href=Routes.userPath(user.name))= user.name
         p= user.email

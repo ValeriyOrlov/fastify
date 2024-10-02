@@ -2,9 +2,9 @@ extends ../layouts/page.pug
 
 block content
   h2
-    a(href='/courses/new') Create course
+    a(href=Routes.newCoursesPath()) Create course
   fieldset
-    form(role = 'form' method = 'GET' action = '/courses')
+    form(role = 'form' method = 'GET' action = Routes.coursesPath())
       legend Search by:
         div
           input(type = 'radio', id='title', name = 'searchBy', value = 'title' checked)
@@ -25,6 +25,6 @@ block content
     each course, index in courses
       tr
         td
-          a(href='courses/' + course.id) #{course.id}
+          a(href=Routes.coursePath(course.id)) #{course.id}
           td= course.title
           td= course.description
