@@ -2,6 +2,8 @@ extends ../layouts/page.pug
 
 block content
   h2 User creation
+  if error
+    p= error.message
   form(action = '/users', method = 'post')
     div
       label Name:

@@ -3,6 +3,7 @@ import view from '@fastify/view';
 import pug from 'pug';
 import fastifyFormbody from '@fastify/formbody';
 import _ from 'lodash';
+import yup from 'yup';
 
 const app = fastify({
   logger: true
@@ -56,7 +57,35 @@ app.get('/courses', (req, res) => {
   res.view('src/views/courses/index', data);
 });
 
-app.post('/courses', (req, res) => {
+app.post('/courses', {
+  attachValidation: true,
+  schema: {
+    body: yup.object({
+      title: yup.string().min(2, 'The name must be at least two characters long'),
+      description: yup.string().min(10, 'The description must be at least ten characters long')
+    }),
+  },
+  validatorCompiler: ({ schema }) => (data) => {
+    try {
+      const result = schema.validateSync(data);
+      return { value: result };
+    } catch (e) {
+      return { error: e };
+    }
+  },
+}, (req, res) => {
+  const { title, description } = req.body;
+
+  if (req.validationError) {
+    const data = {
+      title, description,
+      error: req.validationError,
+    };
+
+    res.view('src/views/courses/new', data);
+    return;
+  }
+
   const course = {
     id: parseInt(_.uniqueId()),
     title: req.body.title,
@@ -98,7 +127,42 @@ app.get('/users', (req, res) => {
   res.view('src/views/users/index', data);
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', {
+  attachValidation: true,
+  schema: {
+    body: yup.object({
+      name: yup.string().min(2, 'The name must be at least two characters long'),
+      email: yup.string().email(),
+      password: yup.string().min(5, 'The password must be at least five characters long'),
+      passwordConfirmation: yup.string().min(5),
+    }),
+  },
+  validatorCompiler: ({ schema, method, url, httpPart }) => (data) => {
+    if (data.password !== data.passwordConfirmation) {
+      return {
+        error: Error('Password confirmation is not equal the password'),
+      };
+    }
+    try {
+      const result = schema.validateSync(data);
+      return { value: result };
+    } catch (e) {
+      return { error: e };
+    }
+  },
+}, (req, res) => {
+  const { name, email, password, passwordConfirmation } = req.body;
+
+  if (req.validationError) {
+    const data = {
+      name, email, password, passwordConfirmation,
+      error: req.validationError,
+    }
+
+    res.view('src/views/users/new', data);
+    return;
+  }
+
   const user = {
     name: req.body.name.trim(),
     email: req.body.email.trim().toLowerCase(),

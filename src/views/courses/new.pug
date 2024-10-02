@@ -1,6 +1,9 @@
 extends ../layouts/page.pug
 
 block content
+  if error
+    p= error.message
+
   h2 Course creation
   form(action = '/courses', method = 'post')
     div
