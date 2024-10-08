@@ -1,0 +1,15 @@
+extends ../layouts/page.pug
+
+block content
+  h2 Edit user
+  if error
+    p= error.message
+  form(action = `/users/${user.id}`, method = 'post')
+    div
+      label Edit name:
+        input(type = 'text', name = 'name', value = user.name)
+    div
+      label Edit mail:
+        input(type = 'email', name = 'email', value = user.email)
+    input(name="_method", type="hidden", value="patch")
+    input(type = 'submit', value = 'Edit')

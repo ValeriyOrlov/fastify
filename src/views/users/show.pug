@@ -1,5 +1,7 @@
 extends ../layouts/page.pug
 
 block content
-  h1= user.name
+  h1= user.name 
   p= user.email
+
+  a(href=Routes.editUsersPath(user.id)) Edit user
